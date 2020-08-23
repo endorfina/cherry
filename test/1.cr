@@ -1,8 +1,8 @@
-let mut& jk = 1;
+let mut jk = &1;
 
 let mut a = 2;
 
-=fn bar(damn: *void) -> &std::string;
+&fn bar(damn: *void) -> &std::string;
 
 fn compare_strings(lhs: &std::string, rhs: &std::string) -> bool
 {
@@ -10,12 +10,12 @@ fn compare_strings(lhs: &std::string, rhs: &std::string) -> bool
 }
 
 template <typename Char>
-+=fn check(c: Char) -> bool {
+:&fn check(c: Char) -> bool {
     return ~c as uint8_t >> 6 == 0x2;
 }
 
 template <typename CharIt>
-+fn sequence_length(it: CharIt) -> unsigned short
+:fn sequence_length(it: CharIt) -> unsigned short
 {
     let byte = ~*it as uint8_t;
 

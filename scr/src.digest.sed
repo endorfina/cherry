@@ -6,8 +6,10 @@ s~(;%s*)import%s*(%path\.hpp)~\1#include <\2>~g
 s~(;%s*)import%s*(%path)~\1#include "\2.hpp"~g
 
 /let/{
-  s~let%s+mut([&*;[:space:]]+)(%name)%s*=~auto\1\2 =~g
-  s~let([&*;[:space:]]+)(%name)%s*=~const auto\1\2 =~g
+  s~let%s+mut%s+(%name)%s*=%s*([&*]*)~auto\2 \1 = ~g
+  s~::let%s+(%name)%s*=%s*([&*]*)~static constexpr auto\2 \1 = ~g
+  s~:let%s+(%name)%s*=%s*([&*]*)~constexpr auto\2 \1 = ~g
+  s~let%s+(%name)%s*=%s*([&*]*)~const auto\2 \1 = ~g
 }
 
 /fn%s+%type%s*\(.*:.*\)/{
@@ -30,8 +32,8 @@ s~(;%s*)import%s*(%path)~\1#include "\2.hpp"~g
 s~\)%s*->%s*([&*]+)%s*mut%s*([[:alpha:]][^{]*[_>[:alnum:]])~) -> \2\1~
 s~\)%s*->%s*([&*]+)%s*([[:alpha:]][^{]*[_>[:alnum:]])~) -> const \2\1~
 
-s~\+(=?fn%s+%type%s*\([^}{]*\))~constexpr \1~
-s~=(fn%s+%type%s*\([^}{]*\))~\1 const~
+s~:([[:punct:]]?fn%s+%type%s*\([^}{]*\))~constexpr \1~
+s~\&(fn%s+%type%s*\([^}{]*\))~\1 const~
 s~fn%s+(%type%s*\([^}{]*\)(%s*%name)*)%s*->~auto \1 noexcept ->~
 s~fn%s+(%type%s*\([^}{]*\)(%s*%name)*)~void \1 noexcept~
 
