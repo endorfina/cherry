@@ -1,6 +1,12 @@
 let mut jk = &1;
 
-let mut a = 2;
+let mut a = jk;
+
+let b: int = 2;
+
+let s: std::string_view = "hello";
+
+let mut sm: std::vector<unsigned int> = { 1, 2 };
 
 &fn bar(damn: *void) -> &std::string;
 

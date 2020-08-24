@@ -6,9 +6,11 @@ s~(;%s*)import%s*(%path\.hpp)~\1#include <\2>~g
 s~(;%s*)import%s*(%path)~\1#include "\2.hpp"~g
 
 /let/{
+  s~let%s+mut%s+(%name)%s*:%s*([[:alpha:]][^=]*[[:alnum:]>])%s*=%s*([&*]*)~\2\3 \1 = ~g
   s~let%s+mut%s+(%name)%s*=%s*([&*]*)~auto\2 \1 = ~g
   s~::let%s+(%name)%s*=%s*([&*]*)~static constexpr auto\2 \1 = ~g
   s~:let%s+(%name)%s*=%s*([&*]*)~constexpr auto\2 \1 = ~g
+  s~let%s+(%name)%s*:%s*([[:alpha:]][^=]*[[:alnum:]>])%s*=%s*([&*]*)~const \2\3 \1 = ~g
   s~let%s+(%name)%s*=%s*([&*]*)~const auto\2 \1 = ~g
 }
 
