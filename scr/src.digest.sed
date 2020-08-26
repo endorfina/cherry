@@ -1,5 +1,7 @@
 :i
-s~(;%s*)import%s*%path%s*\{%s*\}~\1~g
+s~(;%s*)import%s*(%path%s*)?\{%s*\}~\1~g
+s~(;%s*)import%s*\{%s*(%path)%s*(,([^}]+))?\}~\1import \2;import {\4}~
+ti
 s~(;%s*)import%s*(%path)%s*\{%s*(%path)%s*(,([^}]+))?\}~\1import \2/\3;import \2 {\5}~
 ti
 s~(;%s*)import%s*(%path\.hpp)~\1#include <\2>~g

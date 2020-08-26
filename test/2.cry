@@ -1,4 +1,16 @@
+
+import {
+    cfoo.hpp,
+    cbar.hpp
+}
+
 let lambda1 = |x: mut int| {};
+
+
+import prefix {
+    foo,
+    bar
+}
 
 let lambda1 = |s: & std::string, h: &mut std::string| -> void {};
 
