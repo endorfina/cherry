@@ -10,6 +10,9 @@ make_digest:
 
 test: make_digest
 	@rm -rf test/output
-	find test -name '*.?r' -exec ./cherry.sh -f scr/digest.sed -v --out test/output '{}' +
+	find test -name '*.?ry' -exec ./cherry.sh -f scr/digest.sed -v --out test/output '{}' +
+
+ut: make_digest
+	./ut.sh test/uts
 
 .PHONY: make_digest test

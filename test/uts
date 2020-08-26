@@ -1,0 +1,51 @@
+
+@cherry_test
+let mut jk = &1;
+
+@expects
+auto& jk = 1;
+
+@cherry_test
+let a = jk;
+
+@expects
+const auto a = jk;
+
+@cherry_test
+let mut b: int = 2;
+
+@expects
+int b = 2;
+
+@cherry_test
+let mut sm: std::vector<unsigned int> = { 1, 2 };
+
+@expects
+std::vector<unsigned int> sm = { 1, 2 };
+
+@cherry_test
+&fn bar(sweet: *void) -> &std::string;
+
+@expects
+auto bar(const void* sweet) const noexcept -> const std::string&
+
+@cherry_test
+fn compare_strings(lhs: &std::string, rhs: &std::string) -> bool
+
+@expects
+auto compare_strings(const std::string& lhs, const std::string& rhs) noexcept -> bool
+
+@cherry_test
+let cat = |obj: &mut std::vector<std::string>, x: auto, y: auto| { obj.push_back(x + y); }
+
+@expects
+const auto cat = [](std::vector<std::string>& obj, const auto x, const auto y) { obj.push_back(x + y); }
+
+@cherry_test
+import a { b, c }
+
+@expects
+#include "a/b.hpp"
+#include "a/c.hpp"
+
+@

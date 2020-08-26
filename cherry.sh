@@ -1,9 +1,6 @@
 #!/bin/sh
 
-#echo "$@" test -n "$sed_script" -a -r "$sed_script" \
-#    || (echo >&2 "💀 ${0##*/} error: sed script is unreadable" ; exit 1)
-
-export LC_ALL=C
+export LC_ALL=C  # vital for sed regex parsing
 
 swapn()
 {
@@ -12,7 +9,7 @@ swapn()
 
 transcode()
 {
-    sed -E -e '1s~^[^[:punct:][:alnum:]]+~~' -e 's~[[:space:]]*//.*$~~' \
+    sed -E -e '1s~^[^[:punct:][:alnum:]]+~~' -e 's~[[:space:]]*//.*$~~' "$1" \
         | swapn \
         | sed -nE -f "$sed_script" \
         | swapn
@@ -21,14 +18,14 @@ transcode()
 transcode_with_guard()
 {
     echo '#pragma once'
-    transcode < "$1"
+    transcode "$1"
 }
 
 transcode_with_include()
 {
-    header_file=${1%.cr}.hpp
-    test -r "${header_file%pp}r" && echo "#include \"${header_file##*/}\""
-    transcode < "$1"
+    header_file=${1%.cry}.hpp
+    test -r "${header_file%pp}ry" && echo "#include \"${header_file##*/}\""
+    transcode "$1"
 }
 
 check_outdated()
@@ -49,11 +46,13 @@ digest()
 {
     if check_outdated "$2" "$3" || test "$(wc -l < "$3")" -lt 1
     then
-        echo "🌸 [${1##*with_}] ${2#$source_dir} -> ${3##*/}"
+        test "$quiet_mode" = yes \
+            || echo "🌸 [${1##*with_}] ${2#$source_dir} -> ${3##*/}"
+
         mkdir -p "${3%/*}"
         "$1" "$2" > "$3"
 
-        test "$verbose" = yes -a -n "$3" && diff --color=always "$2" "$3"
+        test "$verbose" = yes -a -n "$3" && diff "$2" "$3"
     fi
 }
 
@@ -68,6 +67,7 @@ source_dir=
 dest_dir=.
 verbose=no
 auto_headers=no
+quiet_mode=no
 
 while test "$#" -gt 0
 do
@@ -94,27 +94,37 @@ do
         auto_headers=yes
         ;;
 
+    -q|--quiet)
+        verbose=no
+        quiet_mode=yes
+        ;;
+
     -v|--verbose)
         verbose=yes
         ;;
 
-    *.hr)
-        digest transcode_with_guard "$source_dir$out_name" "$dest_dir/${out_name%.hr}.hpp"
+    *.hry)
+        digest transcode_with_guard "$source_dir$out_name" "$dest_dir/${out_name%ry}pp"
         ;;
 
-    *.cr)
-        digest transcode_with_include "$source_dir$out_name" "$dest_dir/${out_name%.cr}.cpp"
+    *.cry)
+        digest transcode_with_include "$source_dir$out_name" "$dest_dir/${out_name%ry}pp"
 
-        out_name=${out_name%.cr}.hr
+        out_name=${out_name%.cry}.hry
 
         if test "$auto_headers" = yes -a -r "$source_dir$out_name"
         then
-            digest transcode_with_guard "$source_dir$out_name" "$dest_dir/${out_name%.hr}.hpp"
+            digest transcode_with_guard "$source_dir$out_name" "$dest_dir/${out_name%ry}pp"
         fi
         ;;
 
     *)
-        echo "Ignoring argument '$out_name'"
+        if test -r "$source_dir$out_name"
+        then
+            digest transcode "$source_dir$out_name" "$dest_dir/$out_name.cpp"
+        else
+            echo "Ignoring argument '$out_name'"
+        fi
         ;;
     esac
 done
