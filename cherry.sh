@@ -56,6 +56,17 @@ digest()
     fi
 }
 
+regenerate_digest()
+{
+    ( cd "$1" || exit 1
+
+    test -r 'digest.sed' \
+        -a 'digest.sed' -nt 'src.digest.sed' \
+        -a 'digest.sed' -nt 'make_digest.sed' \
+        || sed -E -f 'make_digest.sed' \
+                'src.digest.sed' > 'digest.sed' )
+}
+
 readonly sed_script_name='cherry.sh/digest.sed'
 sed_script=$CHERRY_SED
 
@@ -87,6 +98,18 @@ do
 
     -f|--sedfile)
         sed_script=$1
+        shift
+        if ! test -r "$sed_script"
+        then
+            echo "Error: sed script '${sed_script:-<empty string>}' is unreadable"  # ha!
+            exit 1
+        fi
+        ;;
+
+    -R|--regen)
+        test -z "$1" -o ! -d "$1" \
+            && die "-R|--regen command requires an additional argument pointing to the script directory to be regenerated"
+        regenerate_digest "${1%/}" || exit 1
         shift
         ;;
 
