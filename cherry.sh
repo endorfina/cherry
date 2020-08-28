@@ -109,7 +109,10 @@ do
     -R|--regen)
         test -z "$1" -o ! -d "$1" \
             && die "-R|--regen command requires an additional argument pointing to the script directory to be regenerated"
+
         regenerate_digest "${1%/}" || exit 1
+
+        sed_script=${1%/}/digest.sed
         shift
         ;;
 
