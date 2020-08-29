@@ -47,12 +47,12 @@ digest()
     if check_outdated "$2" "$3" || test "$(wc -l < "$3")" -lt 1
     then
         test "$quiet_mode" = yes \
-            || echo "🌸 [${1##*with_}] ${2#$source_dir} -> ${3##*/}"
+            || echo >&2 "🌸 [${1##*with_}] ${2#$source_dir} -> ${3##*/}"
 
         mkdir -p "${3%/*}"
         "$1" "$2" > "$3"
 
-        test "$verbose" = yes -a -n "$3" && diff "$2" "$3"
+        test "$verbose" = yes -a -n "$3" && diff >&2 "$2" "$3"
     fi
 }
 
@@ -101,7 +101,7 @@ do
         shift
         if ! test -r "$sed_script"
         then
-            echo "Error: sed script '${sed_script:-<empty string>}' is unreadable"  # ha!
+            echo >&2 "Error: sed script '${sed_script:-<empty string>}' is unreadable"  # ha!
             exit 1
         fi
         ;;
@@ -153,7 +153,7 @@ do
         then
             digest transcode "$source_dir$out_name" "$dest_dir/$out_name.cpp"
         else
-            echo "Ignoring argument '$out_name'"
+            echo >&2 "Ignoring argument '$out_name'"
         fi
         ;;
     esac
