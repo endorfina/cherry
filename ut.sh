@@ -20,21 +20,13 @@ ws_trim()
 [[ $# -gt 0 ]] || die "Not enough arguments"
 
 cd "${0%/*}" || die
-cherry_dir=$(pwd) || die
-tmp_dir=$(mktemp -d) || die
 
-readonly test_file_basename=cherry_test_file
-
-test_file=$tmp_dir/$test_file_basename
-script_file=$cherry_dir/cherry.sh
-sed_file=$cherry_dir/scr/digest.sed
-
-regex_str='@cherry_test([^@]+)@expects([^@]+)(@.*)$'
-
-readonly {cherry,tmp}_dir regex_str {test,script,sed}_file
+readonly script_file=./cherry.sh
+readonly sed_file=scr/digest.sed
+readonly regex_elem='[[:space:]]+([^@]+)[[:space:]]+'
+readonly regex_str="@cherry_test${regex_elem}@expects${regex_elem}(@.*)?\$"
 
 [[ -r $sed_file ]] || make -s || die "Make failed"
-cd "$tmp_dir" || die "Couldn't enter temporary directory"
 
 failed=no
 
@@ -42,22 +34,16 @@ counter=0
 
 while [[ $# -gt 0 ]]
 do
-    [[ -r $cherry_dir/$1 ]] || die "File \"$cherry_dir/$1\" could not be read"
+    [[ -r $1 ]] || die "File \"$1\" could not be read"
 
-    SOURCE=$(ws_trim < "$cherry_dir/$1")
+    SOURCE=$(ws_trim < "$1")
     shift
 
     while [[ $SOURCE =~ $regex_str ]]
     do
-        echo -En "${BASH_REMATCH[1]}" > "$test_file"
+        RESULT=$(echo -En "${BASH_REMATCH[1]}" | "$script_file" -q -f "$sed_file" -) || die "Error reading results"
 
         (( ++counter ))
-
-        "$script_file" -q -f "$sed_file" "$test_file_basename"
-
-        RESULT=$(cat "$test_file_basename.cpp") || die "Error reading results"
-
-        rm "$test_file_basename.cpp"
 
         expected=${BASH_REMATCH[2]//[[:space:]]/}
 
@@ -73,7 +59,7 @@ do
     done
 done
 
-rm -rf "$tmp_dir"
+echo "[Tests run: $counter]"
 
 [[ $failed == yes ]] && die "Cherry unit test failed"
 

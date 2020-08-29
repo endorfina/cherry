@@ -70,5 +70,12 @@ import a { b, c }
 #include "a/c.hpp"
 
 
+@cherry_test
+import { a.hpp, b.h }
+
+@expects
+#include <a.hpp>
+#include <b.h>
+
 
 @

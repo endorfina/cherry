@@ -9,7 +9,7 @@ swapn()
 
 transcode()
 {
-    sed -E -e '1s~^[^[:punct:][:alnum:]]+~~' -e 's~[[:space:]]*//.*$~~' "$1" \
+    sed -E -e '1s~^[^[:punct:][:alnum:]]+~~' -e 's~[[:space:]]*//.*$~~' "$@" \
         | swapn \
         | sed -nE -f "$sed_script" \
         | swapn
@@ -142,6 +142,10 @@ do
         then
             digest transcode_with_guard "$source_dir$out_name" "$dest_dir/${out_name%ry}pp"
         fi
+        ;;
+
+    -)
+        transcode
         ;;
 
     *)
