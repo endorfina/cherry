@@ -44,7 +44,9 @@ hint_script_path()
 
 digest()
 {
-    if check_outdated "$2" "$3" || test "$(wc -l < "$3")" -lt 1
+    if test "$has_regenerated" = yes \
+        || check_outdated "$2" "$3" \
+        || test "$(wc -l < "$3")" -lt 1
     then
         test "$quiet_mode" = yes \
             || echo >&2 "🌸 [${1##*with_}] ${2#$source_dir} -> ${3##*/}"
@@ -58,13 +60,19 @@ digest()
 
 regenerate_digest()
 {
-    ( cd "$1" || exit 1
+    cd "$1" || exit 1
 
-    test -r 'digest.sed' \
+    if ! test -r 'digest.sed' \
         -a 'digest.sed' -nt 'src.digest.sed' \
-        -a 'digest.sed' -nt 'make_digest.sed' \
-        || sed -E -f 'make_digest.sed' \
-                'src.digest.sed' > 'digest.sed' )
+        -a 'digest.sed' -nt 'make_digest.sed'
+    then
+        sed -E -f 'make_digest.sed' \
+            'src.digest.sed' > 'digest.sed'
+
+        has_regenerated=yes
+    fi
+
+    cd - >/dev/null || exit 1
 }
 
 readonly sed_script_name='cherry.sh/digest.sed'
@@ -79,6 +87,7 @@ dest_dir=.
 verbose=no
 auto_headers=no
 quiet_mode=no
+has_regenerated=no
 
 while test "$#" -gt 0
 do
