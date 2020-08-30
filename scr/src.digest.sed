@@ -9,6 +9,10 @@
   s~(^|;)%s*import%s*(%path)~\1#include "\2.hpp"~g
 }
 
+:c
+s~(<[^>()]+),([^>()]+>)~\1[++]comma\2~
+tc
+
 /fn%s+%type%s*\(.*:.*\)/{
   :a
   s~fn%s+(%type)\((.*,%s*)?%s*(%name)%s*:%s*([&*]*)%s*%opt_mut%s*([[:alpha:]][^,()]+)~fn \1(\4%res_const \7\6 \5~;ta
@@ -19,6 +23,8 @@
   s~\|(.*,%s*)?%s*(%name)%s*:%s*([&*]*)%s*%opt_mut%s*([[:alpha:]][^,|]+)([^|]*\|%s*(->|\{))~|\1%res_const \4\3 \2\5~;tb
   s~\|([^|]*)\|%s*(->|\{)~[](\1) \2~g
 }
+
+s~\[\+\+\]comma~,~g
 
 s~\)%s*->%s*([&*]+)%s*%opt_mut%s*([[:alpha:]][^{]*[_>[:alnum:]])~) -> %res_const \2\1~
 

@@ -63,6 +63,12 @@ const auto cat = [](std::vector<std::string>& obj, const auto x, const auto y) {
 
 
 @cherry_test
+fn templ_func(times: unsigned, ray_array: &mut std::array<float, Size>, rando: &mut Rand);
+
+@expects
+void templ_func(const unsigned times, std::array<float, Size>& ray_array, Rand& rando) noexcept;
+
+@cherry_test
 import a { b, c }
 
 @expects
