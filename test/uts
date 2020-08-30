@@ -78,4 +78,11 @@ import { a.hpp, b.h }
 #include <b.h>
 
 
+@cherry_test
+import .. { a }
+
+@expects
+#include "../a.hpp"
+
+
 @
