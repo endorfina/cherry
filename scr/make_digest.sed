@@ -6,7 +6,7 @@
     s~%const_let~let~g
     x
 
-    s~%res_cexpr~ constexpr~g
+    s~%res_cexpr~constexpr~g
     s~%const_let~:let~g
     s~%opt_mut(%s[*+])?~~g
     s~%res_const[[:space:]]?~~g

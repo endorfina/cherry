@@ -4,8 +4,7 @@ export LC_ALL=C
 
 die()
 {
-    [[ -n $tmp_dir && -d $tmp_dir ]] && rm -rf "$tmp_dir"
-    echo >&2 "!! ${BASH_SOURCE[0]}: $*"
+    echo >&2 "!! ${BASH_SOURCE[0]##*/}: $*"
     exit 1
 }
 
@@ -47,7 +46,7 @@ do
 
         expected=${BASH_REMATCH[2]//[[:space:]]/}
 
-        if [[ ! ${RESULT//[[:space:]]/} == *$expected* ]]
+        if [[ ${RESULT//[[:space:]]/} != *"$expected"* ]]
         then
             printf 'Test no. %d\nExpected:\n%s\n\n--\n\nGot:\n%s\n\n--\n\n' \
                         "$counter" "${BASH_REMATCH[2]// /.}" "${RESULT// /.}"

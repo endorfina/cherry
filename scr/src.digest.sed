@@ -21,22 +21,22 @@ tc
 /\|[^|]*\|%s*(->|\{)/{
   :b
   s~\|(.*,%s*)?%s*(%name)%s*:%s*([&*]*)%s*%opt_mut%s*([[:alpha:]][^,|]+)([^|]*\|%s*(->|\{))~|\1%res_const \4\3 \2\5~;tb
-  s~\|([^|]*)\|%s*(->|\{)~[](\1) \2~g
+  s~(\[(.*)\]%s*)?\|([^|]*)\|%s*(->|\{)~[\2](\3) \4~g
 }
 
 s~\[\+\+\]comma~,~g
 
 s~\)%s*->%s*([&*]+)%s*%opt_mut%s*([[:alpha:]][^{]*[_>[:alnum:]])~) -> %res_const \2\1~
 
-s~:([[:punct:]]?fn%s+%type%s*\([^}{]*\))~ constexpr \1~
+s~:([[:punct:]]?fn%s+%type%s*\([^}{]*\))~constexpr \1~
 s~\&(fn%s+%type%s*\([^}{]*\))~\1 const~
 s~fn%s+(%type%s*\([^}{]*\)(%s*%name)*)%s*->~auto \1 noexcept ->~
 s~fn%s+(%type%s*\([^}{]*\)(%s*%name)*)~void \1 noexcept~
 
 /let%s/{
-  s~::let%s+~ static :let ~g
-  s~%const_let%s+%opt_mut%s+(%name)%s*:%s*(%ftype)%s*=%s*([&*]*)~%res_cexpr %res_const \2\3 \1 = ~g
-  s~%const_let%s+%opt_mut%s+(%name)%s*:%s*(%ftype)%s*\{~%res_cexpr %res_const \2 \1 {~g
+  s~::let%s+~static :let ~g
+  s~%const_let%s+%opt_mut%s+(%name)%s*:%s*(%ftype)%s*(\[[^[:punct:]]*\])?%s*=%s*([&*]*)~%res_cexpr %res_const \2\4 \1\3 = ~g
+  s~%const_let%s+%opt_mut%s+(%name)%s*:%s*(%ftype)%s*(\[[^[:punct:]]*\])?%s*\{~%res_cexpr %res_const \2 \1\3 {~g
   s~%const_let%s+%opt_mut%s+(%name)%s*=%s*([&*]*)~%res_cexpr %res_const auto\2 \1 = ~g
 }
 

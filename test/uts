@@ -63,10 +63,18 @@ const auto cat = [](std::vector<std::string>& obj, const auto x, const auto y) {
 
 
 @cherry_test
+let lam = [&foo=bar] |x: int, y: int| -> Type { return foo(x + y); }
+
+@expects
+const auto lam = [&foo=bar](const int x, const int y) -> Type { return foo(x + y); }
+
+
+@cherry_test
 fn templ_func(times: unsigned, ray_array: &mut std::array<float, Size>, rando: &mut Rand);
 
 @expects
 void templ_func(const unsigned times, std::array<float, Size>& ray_array, Rand& rando) noexcept;
+
 
 @cherry_test
 import a { b, c }
@@ -89,6 +97,20 @@ import .. { a }
 
 @expects
 #include "../a.hpp"
+
+
+@cherry_test
+let str: char[]{};
+
+@expects
+const char str[]{};
+
+
+@cherry_test
+let mut buffer: unsigned char[30] = { ... };
+
+@expects
+unsigned char buffer[30] = { ... };
 
 
 @
